@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "HMC Club",
+    "slug": "hmc-club-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "scheme": "hmcclub",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0f1b2d"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.hmcclub.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "HMC Club needs camera access to take photos for documents.",
+        "NSPhotoLibraryUsageDescription": "HMC Club needs photo library access to upload document images."
+      }
+    },
+    "android": {
+      "package": "com.hmcclub.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0f1b2d"
+      },
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#d69e2e"
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "your-eas-project-id"
+      }
+    }
+  }
+}
