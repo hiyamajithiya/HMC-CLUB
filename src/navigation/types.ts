@@ -26,7 +26,7 @@ export type ClientTabParamList = {
 export type ClientStackParamList = {
   ClientTabs: NavigatorScreenParams<ClientTabParamList>
   FolderDetail: { folderId: string; folderName: string; userId: string }
-  DocumentViewer: { documentId: string; title: string }
+  DocumentViewer: { documentId: string; title: string; fileType?: string }
   BookAppointment: undefined
   ChangePassword: undefined
 }
@@ -63,7 +63,7 @@ export type AdminStackParamList = {
   LeadsList: undefined
   Settings: undefined
   ChangePassword: undefined
-  AdminDocumentViewer: { documentId: string; title: string }
+  AdminDocumentViewer: { documentId: string; title: string; fileType?: string }
 }
 
 // Root Navigator

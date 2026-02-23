@@ -87,7 +87,7 @@ export default function DocumentsScreen({ navigation }: ClientTabScreenProps<'Do
   const renderDocument = ({ item }: { item: Document }) => (
     <TouchableOpacity
       style={styles.docCard}
-      onPress={() => navigation.navigate('DocumentViewer', { documentId: item.id, title: item.title })}
+      onPress={() => navigation.navigate('DocumentViewer', { documentId: item.id, title: item.title, fileType: item.fileType })}
       activeOpacity={0.7}
     >
       <View style={styles.docIcon}>

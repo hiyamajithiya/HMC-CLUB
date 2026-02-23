@@ -111,6 +111,7 @@ export default function UserDocumentsScreen({ navigation, route }: any) {
             onPress={() => navigation.navigate('AdminDocumentViewer', {
               documentId: item.id,
               title: item.title || item.fileName,
+              fileType: item.mimeType,
             })}
             activeOpacity={0.7}
           >

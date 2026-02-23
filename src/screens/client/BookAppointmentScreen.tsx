@@ -10,6 +10,7 @@ import {
   TextInput,
 } from 'react-native'
 import { Text, ActivityIndicator } from 'react-native-paper'
+import DateTimePicker from '@react-native-community/datetimepicker'
 import { Ionicons } from '@expo/vector-icons'
 import { api } from '../../api/client'
 import type { ClientScreenProps } from '../../navigation/types'
@@ -25,85 +26,75 @@ const SERVICES = [
   'Other',
 ]
 
-function formatDateInput(text: string): string {
-  const digits = text.replace(/\D/g, '').slice(0, 8)
-  if (digits.length <= 2) return digits
-  if (digits.length <= 4) return `${digits.slice(0, 2)}-${digits.slice(2)}`
-  return `${digits.slice(0, 2)}-${digits.slice(2, 4)}-${digits.slice(4)}`
+function toISODateStr(date: Date): string {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
 }
 
-function toISODate(ddmmyyyy: string): string {
-  const [dd, mm, yyyy] = ddmmyyyy.split('-')
-  return `${yyyy}-${mm}-${dd}`
+function formatDisplayDate(date: Date): string {
+  return date.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' })
 }
 
 export default function BookAppointmentScreen({ navigation }: ClientScreenProps<'BookAppointment'>) {
   const [service, setService] = useState('')
-  const [date, setDate] = useState('')
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  const [showDatePicker, setShowDatePicker] = useState(false)
   const [timeSlot, setTimeSlot] = useState('')
   const [message, setMessage] = useState('')
   const [slots, setSlots] = useState<string[]>([])
   const [slotsLoading, setSlotsLoading] = useState(false)
   const [slotsLoaded, setSlotsLoaded] = useState(false)
+  const [slotsError, setSlotsError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
   const fetchSlots = useCallback(async (isoDate: string) => {
     setSlotsLoading(true)
     setSlotsLoaded(false)
+    setSlotsError('')
     setTimeSlot('')
     setSlots([])
     try {
       const { data } = await api.get('/user/available-slots', { params: { date: isoDate } })
       setSlots(data.slots || [])
       setSlotsLoaded(true)
-    } catch {
-      Alert.alert('Error', 'Failed to load available time slots. Please try again.')
+    } catch (err: any) {
+      const msg = err?.response?.data?.error || 'Could not load available slots. Please check your connection and try again.'
+      setSlotsError(msg)
     } finally {
       setSlotsLoading(false)
     }
   }, [])
 
-  const handleDateChange = (text: string) => {
-    const formatted = formatDateInput(text)
-    setDate(formatted)
-    setTimeSlot('')
-    setSlots([])
-    setSlotsLoaded(false)
-
-    if (formatted.length === 10) {
-      const iso = toISODate(formatted)
-      const parsed = new Date(iso)
-      const today = new Date()
-      today.setHours(0, 0, 0, 0)
-      if (isNaN(parsed.getTime())) {
-        Alert.alert('Invalid Date', 'Please enter a valid date.')
-        return
-      }
-      if (parsed < today) {
-        Alert.alert('Invalid Date', 'Please select a future date.')
-        return
-      }
-      fetchSlots(iso)
+  const handleDateChange = (_: any, date?: Date) => {
+    setShowDatePicker(Platform.OS === 'ios') // keep open on iOS, close on Android
+    if (date) {
+      setSelectedDate(date)
+      setTimeSlot('')
+      setSlots([])
+      setSlotsLoaded(false)
+      setSlotsError('')
+      fetchSlots(toISODateStr(date))
     }
   }
 
   const handleSubmit = async () => {
     if (!service) return Alert.alert('Required', 'Please select a service.')
-    if (date.length !== 10) return Alert.alert('Required', 'Please enter a valid date (DD-MM-YYYY).')
+    if (!selectedDate) return Alert.alert('Required', 'Please select a date.')
     if (!timeSlot) return Alert.alert('Required', 'Please select an available time slot.')
 
-    const isoDate = toISODate(date)
     setSubmitting(true)
     try {
       await api.post('/user/appointments', {
         service,
-        date: isoDate,
+        date: toISODateStr(selectedDate),
         timeSlot,
         message: message.trim() || undefined,
       })
       Alert.alert(
         'Appointment Booked!',
-        `Your ${service} appointment has been booked for ${date} at ${timeSlot}.\n\nWe will confirm shortly.`,
+        `Your ${service} appointment has been booked for ${formatDisplayDate(selectedDate)} at ${timeSlot}.\n\nWe will confirm shortly.`,
         [{ text: 'OK', onPress: () => navigation.goBack() }]
       )
     } catch (err: any) {
@@ -113,6 +104,9 @@ export default function BookAppointmentScreen({ navigation }: ClientScreenProps<
       setSubmitting(false)
     }
   }
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
 
   return (
     <KeyboardAvoidingView
@@ -130,8 +124,11 @@ export default function BookAppointmentScreen({ navigation }: ClientScreenProps<
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
         {/* Service selection */}
         <Text style={styles.label}>Service <Text style={styles.required}>*</Text></Text>
         <View style={styles.chipGrid}>
@@ -147,21 +144,37 @@ export default function BookAppointmentScreen({ navigation }: ClientScreenProps<
           ))}
         </View>
 
-        {/* Date input */}
+        {/* Date picker */}
         <Text style={[styles.label, { marginTop: 20 }]}>Date <Text style={styles.required}>*</Text></Text>
-        <View style={[styles.inputWrapper, date.length > 0 && date.length < 10 && styles.inputError]}>
-          <Ionicons name="calendar-outline" size={20} color="#64748b" style={styles.inputIcon} />
-          <TextInput
-            style={styles.input}
-            value={date}
-            onChangeText={handleDateChange}
-            placeholder="DD-MM-YYYY"
-            placeholderTextColor="#94a3b8"
-            keyboardType="number-pad"
-            maxLength={10}
+        <TouchableOpacity
+          style={styles.dateBtn}
+          onPress={() => setShowDatePicker(true)}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="calendar-outline" size={20} color={selectedDate ? '#0f1b2d' : '#94a3b8'} />
+          <Text style={[styles.dateBtnText, !selectedDate && styles.dateBtnPlaceholder]}>
+            {selectedDate ? formatDisplayDate(selectedDate) : 'Tap to select a date'}
+          </Text>
+          <Ionicons name="chevron-down" size={18} color="#94a3b8" />
+        </TouchableOpacity>
+
+        {showDatePicker && (
+          <DateTimePicker
+            value={selectedDate || today}
+            mode="date"
+            display={Platform.OS === 'ios' ? 'inline' : 'default'}
+            minimumDate={today}
+            onChange={handleDateChange}
+            themeVariant="light"
           />
-        </View>
-        <Text style={styles.hint}>Tap a date to see available slots from our calendar</Text>
+        )}
+
+        {/* iOS close button */}
+        {showDatePicker && Platform.OS === 'ios' && (
+          <TouchableOpacity style={styles.iosDateDone} onPress={() => setShowDatePicker(false)}>
+            <Text style={styles.iosDateDoneText}>Done</Text>
+          </TouchableOpacity>
+        )}
 
         {/* Time slot section */}
         <Text style={[styles.label, { marginTop: 20 }]}>
@@ -171,7 +184,19 @@ export default function BookAppointmentScreen({ navigation }: ClientScreenProps<
         {slotsLoading && (
           <View style={styles.slotsLoading}>
             <ActivityIndicator size="small" color="#d69e2e" />
-            <Text style={styles.slotsLoadingText}>Checking availability...</Text>
+            <Text style={styles.slotsLoadingText}>Checking calendar availability...</Text>
+          </View>
+        )}
+
+        {!slotsLoading && slotsError !== '' && (
+          <View style={styles.slotsError}>
+            <Ionicons name="alert-circle-outline" size={20} color="#ef4444" />
+            <Text style={styles.slotsErrorText}>{slotsError}</Text>
+            {selectedDate && (
+              <TouchableOpacity onPress={() => fetchSlots(toISODateStr(selectedDate))} style={styles.retryBtn}>
+                <Text style={styles.retryBtnText}>Retry</Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
 
@@ -179,7 +204,7 @@ export default function BookAppointmentScreen({ navigation }: ClientScreenProps<
           <View style={styles.noSlots}>
             <Ionicons name="calendar-outline" size={32} color="#94a3b8" />
             <Text style={styles.noSlotsText}>No slots available for this date.</Text>
-            <Text style={styles.noSlotsHint}>Please try a different date.</Text>
+            <Text style={styles.noSlotsHint}>Please select a different date.</Text>
           </View>
         )}
 
@@ -198,8 +223,8 @@ export default function BookAppointmentScreen({ navigation }: ClientScreenProps<
           </View>
         )}
 
-        {!slotsLoaded && !slotsLoading && (
-          <Text style={styles.hint}>Enter a date above to see available slots</Text>
+        {!slotsLoaded && !slotsLoading && !slotsError && (
+          <Text style={styles.hint}>Select a date above to see available slots</Text>
         )}
 
         {/* Message */}
@@ -271,20 +296,47 @@ const styles = StyleSheet.create({
   chipSelected: { backgroundColor: '#d69e2e', borderColor: '#d69e2e' },
   chipText: { fontSize: 13, color: '#374151', fontWeight: '500' },
   chipTextSelected: { color: '#fff', fontWeight: '600' },
+  dateBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: '#e2e8f0',
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    gap: 10,
+  },
+  dateBtnText: { flex: 1, fontSize: 15, color: '#0f1b2d', fontWeight: '500' },
+  dateBtnPlaceholder: { color: '#94a3b8', fontWeight: '400' },
+  iosDateDone: {
+    alignSelf: 'flex-end',
+    marginTop: 8,
+    backgroundColor: '#d69e2e',
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  iosDateDoneText: { color: '#fff', fontWeight: '600', fontSize: 13 },
   inputWrapper: {
     flexDirection: 'row', alignItems: 'center',
     backgroundColor: '#fff', borderRadius: 12,
     borderWidth: 1.5, borderColor: '#e2e8f0',
     paddingHorizontal: 14, minHeight: 52,
   },
-  inputError: { borderColor: '#ef4444' },
   textAreaWrapper: { alignItems: 'flex-start', paddingVertical: 12 },
-  inputIcon: { marginRight: 10 },
   input: { flex: 1, fontSize: 15, color: '#0f1b2d', paddingVertical: 0 },
   textArea: { minHeight: 72 },
   hint: { fontSize: 11, color: '#94a3b8', marginTop: 4, marginLeft: 2 },
   slotsLoading: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 16 },
   slotsLoadingText: { fontSize: 13, color: '#64748b' },
+  slotsError: {
+    backgroundColor: '#fef2f2', borderRadius: 10, padding: 14,
+    flexDirection: 'row', alignItems: 'flex-start', gap: 8, flexWrap: 'wrap',
+  },
+  slotsErrorText: { flex: 1, fontSize: 13, color: '#ef4444', lineHeight: 18 },
+  retryBtn: { marginTop: 8, backgroundColor: '#ef4444', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 5 },
+  retryBtnText: { color: '#fff', fontSize: 12, fontWeight: '600' },
   noSlots: { alignItems: 'center', paddingVertical: 20, gap: 6 },
   noSlotsText: { fontSize: 14, fontWeight: '600', color: '#475569' },
   noSlotsHint: { fontSize: 12, color: '#94a3b8' },
