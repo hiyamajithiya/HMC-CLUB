@@ -1,9 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios'
 import * as SecureStore from 'expo-secure-store'
 
-const API_BASE_URL = __DEV__
-  ? 'http://192.168.1.94:3000' // Local dev machine IP
-  : 'https://himanshumajithiya.com'
+const API_BASE_URL = 'https://himanshumajithiya.com'
 
 export const api = axios.create({
   baseURL: `${API_BASE_URL}/api`,
