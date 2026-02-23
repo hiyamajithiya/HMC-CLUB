@@ -4,11 +4,14 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Ionicons } from '@expo/vector-icons'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ClientStackParamList, ClientTabParamList } from './types'
+import ClientDashboardScreen from '../screens/client/ClientDashboardScreen'
 import DocumentsScreen from '../screens/client/DocumentsScreen'
 import AppointmentsScreen from '../screens/client/AppointmentsScreen'
 import ProfileScreen from '../screens/client/ProfileScreen'
 import NotificationsScreen from '../screens/client/NotificationsScreen'
 import FolderDetailScreen from '../screens/client/FolderDetailScreen'
+import DocumentViewerScreen from '../screens/client/DocumentViewerScreen'
+import BookAppointmentScreen from '../screens/client/BookAppointmentScreen'
 import ChangePasswordScreen from '../screens/client/ChangePasswordScreen'
 
 const Tab = createBottomTabNavigator<ClientTabParamList>()
@@ -33,8 +36,9 @@ function ClientTabs() {
           fontWeight: '600',
         },
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName: keyof typeof Ionicons.glyphMap = 'document'
-          if (route.name === 'Documents') iconName = focused ? 'document-text' : 'document-text-outline'
+          let iconName: keyof typeof Ionicons.glyphMap = 'home'
+          if (route.name === 'Dashboard') iconName = focused ? 'home' : 'home-outline'
+          else if (route.name === 'Documents') iconName = focused ? 'document-text' : 'document-text-outline'
           else if (route.name === 'Appointments') iconName = focused ? 'calendar' : 'calendar-outline'
           else if (route.name === 'Profile') iconName = focused ? 'person' : 'person-outline'
           else if (route.name === 'Notifications') iconName = focused ? 'notifications' : 'notifications-outline'
@@ -42,6 +46,7 @@ function ClientTabs() {
         },
       })}
     >
+      <Tab.Screen name="Dashboard" component={ClientDashboardScreen} />
       <Tab.Screen name="Documents" component={DocumentsScreen} />
       <Tab.Screen name="Appointments" component={AppointmentsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
@@ -69,6 +74,16 @@ export default function ClientNavigator() {
         name="FolderDetail"
         component={FolderDetailScreen}
         options={({ route }) => ({ title: route.params.folderName })}
+      />
+      <Stack.Screen
+        name="DocumentViewer"
+        component={DocumentViewerScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="BookAppointment"
+        component={BookAppointmentScreen}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="ChangePassword"

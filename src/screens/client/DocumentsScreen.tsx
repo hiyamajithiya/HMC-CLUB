@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from 'react'
 import { View, StyleSheet, FlatList, TouchableOpacity, RefreshControl, Alert } from 'react-native'
-import { Text, Chip, Searchbar, FAB } from 'react-native-paper'
+import { Text, Chip, Searchbar } from 'react-native-paper'
 import { Ionicons } from '@expo/vector-icons'
 import { useFocusEffect } from '@react-navigation/native'
 import { api } from '../../api/client'
-import type { Document, DocumentFolder, DocCategory } from '../../types'
+import type { Document, DocumentFolder } from '../../types'
 import type { ClientTabScreenProps } from '../../navigation/types'
 
 const CATEGORIES: { label: string; value: string }[] = [
@@ -85,7 +85,11 @@ export default function DocumentsScreen({ navigation }: ClientTabScreenProps<'Do
   )
 
   const renderDocument = ({ item }: { item: Document }) => (
-    <TouchableOpacity style={styles.docCard}>
+    <TouchableOpacity
+      style={styles.docCard}
+      onPress={() => navigation.navigate('DocumentViewer', { documentId: item.id, title: item.title })}
+      activeOpacity={0.7}
+    >
       <View style={styles.docIcon}>
         <Ionicons
           name={FILE_ICONS[item.fileType] || 'document'}
@@ -99,7 +103,7 @@ export default function DocumentsScreen({ navigation }: ClientTabScreenProps<'Do
           {formatSize(item.fileSize)} · {new Date(item.createdAt).toLocaleDateString()}
         </Text>
       </View>
-      <Ionicons name="download-outline" size={20} color="#d69e2e" />
+      <Ionicons name="chevron-forward" size={18} color="#d69e2e" />
     </TouchableOpacity>
   )
 
@@ -120,12 +124,13 @@ export default function DocumentsScreen({ navigation }: ClientTabScreenProps<'Do
         inputStyle={{ fontSize: 14 }}
       />
 
-      {/* Category chips */}
+      {/* Category chips — flexShrink: 0 prevents this row from being squashed */}
       <FlatList
         horizontal
         data={CATEGORIES}
         keyExtractor={c => c.value}
         showsHorizontalScrollIndicator={false}
+        style={styles.chipList}
         contentContainerStyle={styles.chipContainer}
         renderItem={({ item }) => (
           <Chip
@@ -141,7 +146,10 @@ export default function DocumentsScreen({ navigation }: ClientTabScreenProps<'Do
 
       {/* Content */}
       <FlatList
-        data={[...folders.map(f => ({ ...f, _type: 'folder' as const })), ...filteredDocs.map(d => ({ ...d, _type: 'doc' as const }))]}
+        data={[
+          ...folders.map(f => ({ ...f, _type: 'folder' as const })),
+          ...filteredDocs.map(d => ({ ...d, _type: 'doc' as const })),
+        ]}
         keyExtractor={item => item.id}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={fetchData} />}
         contentContainerStyle={styles.listContent}
@@ -171,7 +179,14 @@ const styles = StyleSheet.create({
     paddingTop: 56,
     paddingBottom: 16,
   },
-  firmLabel: { fontSize: 11, color: '#d69e2e', fontWeight: '600', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 2 },
+  firmLabel: {
+    fontSize: 11,
+    color: '#d69e2e',
+    fontWeight: '600',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    marginBottom: 2,
+  },
   headerTitle: { color: '#fff', fontWeight: '700' },
   searchBar: {
     margin: 16,
@@ -179,12 +194,14 @@ const styles = StyleSheet.create({
     elevation: 2,
     borderRadius: 12,
   },
-  chipContainer: { paddingHorizontal: 16, paddingBottom: 12, gap: 8 },
-  chip: { backgroundColor: '#e2e8f0', marginRight: 6 },
+  // flexShrink: 0 ensures the chip row always renders at its natural height
+  chipList: { flexShrink: 0, flexGrow: 0 },
+  chipContainer: { paddingHorizontal: 16, paddingVertical: 8, gap: 8 },
+  chip: { backgroundColor: '#e2e8f0', marginRight: 4 },
   chipSelected: { backgroundColor: '#d69e2e' },
   chipText: { color: '#64748b', fontSize: 12 },
   chipTextSelected: { color: '#fff', fontSize: 12, fontWeight: '600' },
-  listContent: { paddingHorizontal: 16, paddingBottom: 80 },
+  listContent: { paddingHorizontal: 16, paddingTop: 4, paddingBottom: 80 },
   folderCard: {
     flexDirection: 'row',
     alignItems: 'center',

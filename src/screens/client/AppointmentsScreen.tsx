@@ -1,10 +1,12 @@
 import React, { useState, useCallback } from 'react'
 import { View, StyleSheet, FlatList, RefreshControl } from 'react-native'
-import { Text, Chip } from 'react-native-paper'
+import { Text, Chip, FAB } from 'react-native-paper'
 import { Ionicons } from '@expo/vector-icons'
 import { useFocusEffect } from '@react-navigation/native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { api } from '../../api/client'
 import type { Appointment, AppointmentStatus } from '../../types'
+import type { ClientTabScreenProps } from '../../navigation/types'
 
 const STATUS_COLORS: Record<AppointmentStatus, string> = {
   PENDING: '#f59e0b',
@@ -22,7 +24,8 @@ const STATUS_ICONS: Record<AppointmentStatus, keyof typeof Ionicons.glyphMap> = 
   NO_SHOW: 'alert-circle-outline',
 }
 
-export default function AppointmentsScreen() {
+export default function AppointmentsScreen({ navigation }: ClientTabScreenProps<'Appointments'>) {
+  const insets = useSafeAreaInsets()
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>('all')
@@ -115,6 +118,14 @@ export default function AppointmentsScreen() {
         }
         renderItem={renderAppointment}
       />
+
+      <FAB
+        icon="plus"
+        style={[styles.fab, { bottom: 20 + insets.bottom }]}
+        onPress={() => navigation.navigate('BookAppointment')}
+        color="#fff"
+        customSize={52}
+      />
     </View>
   )
 }
@@ -131,7 +142,8 @@ const styles = StyleSheet.create({
   chipSelected: { backgroundColor: '#d69e2e' },
   chipText: { color: '#64748b', fontSize: 12 },
   chipTextSelected: { color: '#fff', fontSize: 12, fontWeight: '600' },
-  list: { paddingHorizontal: 16, paddingBottom: 80 },
+  list: { paddingHorizontal: 16, paddingBottom: 100 },
+  fab: { position: 'absolute', right: 20, backgroundColor: '#d69e2e', elevation: 4 },
   card: {
     flexDirection: 'row',
     backgroundColor: '#fff',

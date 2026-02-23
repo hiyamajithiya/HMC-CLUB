@@ -15,6 +15,7 @@ export type AuthStackParamList = {
 
 // Client Tab Navigator
 export type ClientTabParamList = {
+  Dashboard: undefined
   Documents: undefined
   Appointments: undefined
   Profile: undefined
@@ -26,6 +27,7 @@ export type ClientStackParamList = {
   ClientTabs: NavigatorScreenParams<ClientTabParamList>
   FolderDetail: { folderId: string; folderName: string; userId: string }
   DocumentViewer: { documentId: string; title: string }
+  BookAppointment: undefined
   ChangePassword: undefined
 }
 
