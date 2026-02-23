@@ -106,7 +106,14 @@ export default function UserDocumentsScreen({ navigation, route }: any) {
           ) : null
         }
         renderItem={({ item }) => (
-          <View style={styles.docCard}>
+          <TouchableOpacity
+            style={styles.docCard}
+            onPress={() => navigation.navigate('AdminDocumentViewer', {
+              documentId: item.id,
+              title: item.title || item.fileName,
+            })}
+            activeOpacity={0.7}
+          >
             <View style={styles.docIcon}>
               <Ionicons name={getFileIcon(item.mimeType)} size={24} color="#d69e2e" />
             </View>
@@ -120,7 +127,8 @@ export default function UserDocumentsScreen({ navigation, route }: any) {
                 {` · ${formatDate(item.createdAt)}`}
               </Text>
             </View>
-          </View>
+            <Ionicons name="chevron-forward" size={18} color="#d69e2e" />
+          </TouchableOpacity>
         )}
       />
 

@@ -105,6 +105,7 @@ export default function AdminNavigator() {
       <Stack.Screen name="LeadsList" component={LeadsListScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} options={{ ...NATIVE_HEADER, title: 'Change Password' }} />
+      <Stack.Screen name="AdminDocumentViewer" component={require('../screens/client/DocumentViewerScreen').default} options={{ headerShown: false }} />
     </Stack.Navigator>
   )
 }

@@ -63,6 +63,7 @@ export type AdminStackParamList = {
   LeadsList: undefined
   Settings: undefined
   ChangePassword: undefined
+  AdminDocumentViewer: { documentId: string; title: string }
 }
 
 // Root Navigator

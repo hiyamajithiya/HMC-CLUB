@@ -40,6 +40,7 @@ export default function DashboardScreen({ navigation }: AdminTabScreenProps<'Das
   return (
     <View style={styles.container}>
       <View style={styles.header}>
+        <Text style={styles.firmLabel}>Himanshu Majithiya &amp; Co.</Text>
         <Text variant="headlineSmall" style={styles.headerTitle}>Dashboard</Text>
         <Text variant="bodySmall" style={styles.headerSubtitle}>
           Welcome, {user?.name || 'Admin'}
@@ -105,6 +106,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#0f1b2d',
     paddingHorizontal: 20, paddingTop: 56, paddingBottom: 20,
   },
+  firmLabel: { fontSize: 11, color: '#d69e2e', fontWeight: '600', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 4 },
   headerTitle: { color: '#fff', fontWeight: '700' },
   headerSubtitle: { color: 'rgba(255,255,255,0.6)', marginTop: 2 },
   content: { padding: 16, paddingBottom: 40 },

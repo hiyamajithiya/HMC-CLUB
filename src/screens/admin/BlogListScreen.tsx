@@ -14,6 +14,7 @@ interface BlogPost {
   tags?: string[]
   coverImage?: string
   published: boolean
+  viewCount?: number
   createdAt: string
   updatedAt?: string
 }
@@ -123,6 +124,12 @@ export default function BlogListScreen({ navigation }: any) {
                   {item.category}
                 </Chip>
               )}
+              {(item.viewCount ?? 0) > 0 && (
+                <View style={styles.viewsBadge}>
+                  <Ionicons name="eye-outline" size={12} color="#64748b" />
+                  <Text style={styles.viewsText}>{item.viewCount?.toLocaleString()}</Text>
+                </View>
+              )}
               <Text style={styles.cardDate}>{formatDate(item.createdAt)}</Text>
             </View>
           </TouchableOpacity>
@@ -160,6 +167,8 @@ const styles = StyleSheet.create({
   cardExcerpt: { color: '#94a3b8', marginTop: 4, lineHeight: 18 },
   cardBottom: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   cardDate: { fontSize: 11, color: '#94a3b8', marginLeft: 'auto' },
+  viewsBadge: { flexDirection: 'row', alignItems: 'center', gap: 3, backgroundColor: '#f1f5f9', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2 },
+  viewsText: { fontSize: 11, color: '#64748b', fontWeight: '600' },
   emptyWrap: { alignItems: 'center', marginTop: 60, gap: 8 },
   emptyText: { color: '#94a3b8', fontSize: 14 },
   fab: {
