@@ -2,6 +2,7 @@ import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Ionicons } from '@expo/vector-icons'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { AdminStackParamList, AdminTabParamList } from './types'
 import DashboardScreen from '../screens/admin/DashboardScreen'
 import UsersListScreen from '../screens/admin/UsersListScreen'
@@ -32,6 +33,7 @@ const Tab = createBottomTabNavigator<AdminTabParamList>()
 const Stack = createNativeStackNavigator<AdminStackParamList>()
 
 function AdminTabs() {
+  const insets = useSafeAreaInsets()
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -41,8 +43,8 @@ function AdminTabs() {
         tabBarStyle: {
           backgroundColor: '#0f1b2d',
           borderTopColor: '#1a2d47',
-          paddingBottom: 5,
-          height: 60,
+          paddingBottom: insets.bottom + 5,
+          height: 60 + insets.bottom,
         },
         tabBarLabelStyle: {
           fontSize: 11,
@@ -66,38 +68,43 @@ function AdminTabs() {
   )
 }
 
+const NATIVE_HEADER = {
+  headerShown: true,
+  headerStyle: { backgroundColor: '#0f1b2d' },
+  headerTintColor: '#ffffff',
+  headerTitleStyle: { fontWeight: '600' as const },
+}
+
 export default function AdminNavigator() {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: '#0f1b2d' },
-        headerTintColor: '#ffffff',
-        headerTitleStyle: { fontWeight: '600' },
+        headerShown: false,
         animation: 'slide_from_right',
       }}
     >
-      <Stack.Screen name="AdminTabs" component={AdminTabs} options={{ headerShown: false }} />
-      <Stack.Screen name="UserCreate" component={UserCreateScreen} options={{ title: 'Create User' }} />
-      <Stack.Screen name="UserEdit" component={UserEditScreen} options={{ title: 'Edit User' }} />
-      <Stack.Screen name="UserDocuments" component={UserDocumentsScreen} options={({ route }) => ({ title: `${route.params.userName}'s Documents` })} />
-      <Stack.Screen name="AdminUpload" component={AdminUploadScreen} options={{ title: 'Upload Document' }} />
-      <Stack.Screen name="AdminFolderDetail" component={require('../screens/client/FolderDetailScreen').default} options={({ route }) => ({ title: route.params.folderName })} />
-      <Stack.Screen name="AppointmentsList" component={AppointmentsListScreen} options={{ title: 'Appointments' }} />
-      <Stack.Screen name="AppointmentDetail" component={AppointmentDetailScreen} options={{ title: 'Appointment Details' }} />
-      <Stack.Screen name="ContactsList" component={ContactsListScreen} options={{ title: 'Contacts' }} />
-      <Stack.Screen name="ContactDetail" component={ContactDetailScreen} options={{ title: 'Contact Details' }} />
-      <Stack.Screen name="BlogList" component={BlogListScreen} options={{ title: 'Blog Posts' }} />
-      <Stack.Screen name="BlogCreate" component={BlogCreateScreen} options={{ title: 'New Blog Post' }} />
-      <Stack.Screen name="BlogEdit" component={BlogEditScreen} options={{ title: 'Edit Blog Post' }} />
-      <Stack.Screen name="ToolsList" component={ToolsListScreen} options={{ title: 'Tools' }} />
-      <Stack.Screen name="ToolCreate" component={ToolCreateScreen} options={{ title: 'New Tool' }} />
-      <Stack.Screen name="ToolEdit" component={ToolEditScreen} options={{ title: 'Edit Tool' }} />
-      <Stack.Screen name="DownloadsList" component={DownloadsListScreen} options={{ title: 'Downloads' }} />
-      <Stack.Screen name="DownloadCreate" component={DownloadCreateScreen} options={{ title: 'New Download' }} />
-      <Stack.Screen name="DownloadEdit" component={DownloadEditScreen} options={{ title: 'Edit Download' }} />
-      <Stack.Screen name="LeadsList" component={LeadsListScreen} options={{ title: 'Leads' }} />
-      <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Settings' }} />
-      <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} options={{ title: 'Change Password' }} />
+      <Stack.Screen name="AdminTabs" component={AdminTabs} />
+      <Stack.Screen name="UserCreate" component={UserCreateScreen} />
+      <Stack.Screen name="UserEdit" component={UserEditScreen} />
+      <Stack.Screen name="UserDocuments" component={UserDocumentsScreen} />
+      <Stack.Screen name="AdminUpload" component={AdminUploadScreen} />
+      <Stack.Screen name="AdminFolderDetail" component={require('../screens/client/FolderDetailScreen').default} options={({ route }: any) => ({ ...NATIVE_HEADER, title: route.params.folderName })} />
+      <Stack.Screen name="AppointmentsList" component={AppointmentsListScreen} />
+      <Stack.Screen name="AppointmentDetail" component={AppointmentDetailScreen} />
+      <Stack.Screen name="ContactsList" component={ContactsListScreen} />
+      <Stack.Screen name="ContactDetail" component={ContactDetailScreen} />
+      <Stack.Screen name="BlogList" component={BlogListScreen} />
+      <Stack.Screen name="BlogCreate" component={BlogCreateScreen} />
+      <Stack.Screen name="BlogEdit" component={BlogEditScreen} />
+      <Stack.Screen name="ToolsList" component={ToolsListScreen} />
+      <Stack.Screen name="ToolCreate" component={ToolCreateScreen} />
+      <Stack.Screen name="ToolEdit" component={ToolEditScreen} />
+      <Stack.Screen name="DownloadsList" component={DownloadsListScreen} />
+      <Stack.Screen name="DownloadCreate" component={DownloadCreateScreen} />
+      <Stack.Screen name="DownloadEdit" component={DownloadEditScreen} />
+      <Stack.Screen name="LeadsList" component={LeadsListScreen} />
+      <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} options={{ ...NATIVE_HEADER, title: 'Change Password' }} />
     </Stack.Navigator>
   )
 }

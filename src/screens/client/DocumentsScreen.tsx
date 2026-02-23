@@ -107,7 +107,8 @@ export default function DocumentsScreen({ navigation }: ClientTabScreenProps<'Do
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text variant="headlineSmall" style={styles.headerTitle}>Documents</Text>
+        <Text style={styles.firmLabel}>Himanshu Majithiya &amp; Co.</Text>
+        <Text variant="headlineSmall" style={styles.headerTitle}>My Documents</Text>
       </View>
 
       {/* Search */}
@@ -170,6 +171,7 @@ const styles = StyleSheet.create({
     paddingTop: 56,
     paddingBottom: 16,
   },
+  firmLabel: { fontSize: 11, color: '#d69e2e', fontWeight: '600', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 2 },
   headerTitle: { color: '#fff', fontWeight: '700' },
   searchBar: {
     margin: 16,

@@ -2,6 +2,7 @@ import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Ionicons } from '@expo/vector-icons'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ClientStackParamList, ClientTabParamList } from './types'
 import DocumentsScreen from '../screens/client/DocumentsScreen'
 import AppointmentsScreen from '../screens/client/AppointmentsScreen'
@@ -14,6 +15,7 @@ const Tab = createBottomTabNavigator<ClientTabParamList>()
 const Stack = createNativeStackNavigator<ClientStackParamList>()
 
 function ClientTabs() {
+  const insets = useSafeAreaInsets()
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -23,8 +25,8 @@ function ClientTabs() {
         tabBarStyle: {
           backgroundColor: '#0f1b2d',
           borderTopColor: '#1a2d47',
-          paddingBottom: 5,
-          height: 60,
+          paddingBottom: insets.bottom + 5,
+          height: 60 + insets.bottom,
         },
         tabBarLabelStyle: {
           fontSize: 11,

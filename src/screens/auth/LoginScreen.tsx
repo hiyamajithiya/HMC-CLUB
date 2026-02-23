@@ -54,27 +54,40 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
       <ScrollView
         contentContainerStyle={styles.scroll}
         keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        {/* Logo */}
-        <View style={styles.logoContainer}>
-          <View style={styles.iconCircle}>
-            <Ionicons name="shield-checkmark" size={36} color="#fff" />
+        {/* Branding Section */}
+        <View style={styles.brandSection}>
+          {/* Logo mark */}
+          <View style={styles.logoMark}>
+            <Text style={styles.logoInitials}>HM</Text>
+            <View style={styles.logoAmpersand}>
+              <Text style={styles.logoAmpersandText}>&amp;</Text>
+            </View>
           </View>
-          <Text variant="headlineMedium" style={styles.title}>
-            HMC Club
-          </Text>
-          <Text variant="bodyMedium" style={styles.subtitle}>
-            Himanshu Majithiya & Co.
-          </Text>
+
+          {/* Firm name */}
+          <Text style={styles.firmName}>Himanshu Majithiya</Text>
+          <View style={styles.firmNameRow}>
+            <View style={styles.ampLine} />
+            <Text style={styles.firmAmp}>&amp; Co.</Text>
+            <View style={styles.ampLine} />
+          </View>
+          <Text style={styles.firmTagline}>Chartered Accountants</Text>
+
+          {/* Divider */}
+          <View style={styles.brandDivider} />
+          <Text style={styles.portalLabel}>CLIENT PORTAL</Text>
         </View>
 
-        {/* Form */}
+        {/* Sign In Card */}
         <View style={styles.card}>
+          <View style={styles.cardAccent} />
           <Text variant="titleLarge" style={styles.cardTitle}>
-            Sign In
+            Welcome Back
           </Text>
           <Text variant="bodyMedium" style={styles.cardSubtitle}>
-            Enter your login ID or email
+            Sign in to your account
           </Text>
 
           <TextInput
@@ -131,6 +144,9 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
             <Text style={styles.forgotText}>Forgot Password?</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Footer */}
+        <Text style={styles.footer}>himanshumajithiya.com</Text>
       </ScrollView>
     </KeyboardAvoidingView>
   )
@@ -139,48 +155,135 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f1b2d',
+    backgroundColor: '#0a1628',
   },
   scroll: {
     flexGrow: 1,
     justifyContent: 'center',
-    padding: 24,
+    paddingHorizontal: 24,
+    paddingVertical: 40,
   },
-  logoContainer: {
+
+  /* — Branding — */
+  brandSection: {
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 28,
   },
-  iconCircle: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
+  logoMark: {
+    width: 80,
+    height: 80,
+    borderRadius: 20,
     backgroundColor: '#d69e2e',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 18,
+    elevation: 6,
+    shadowColor: '#d69e2e',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    position: 'relative',
   },
-  title: {
-    color: '#ffffff',
+  logoInitials: {
+    fontSize: 26,
+    fontWeight: '800',
+    color: '#fff',
+    letterSpacing: 1,
+  },
+  logoAmpersand: {
+    position: 'absolute',
+    bottom: -6,
+    right: -6,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#0a1628',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: '#d69e2e',
+  },
+  logoAmpersandText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#d69e2e',
+  },
+  firmName: {
+    fontSize: 22,
     fontWeight: '700',
+    color: '#ffffff',
+    letterSpacing: 0.3,
+    textAlign: 'center',
   },
-  subtitle: {
-    color: 'rgba(255,255,255,0.7)',
-    marginTop: 4,
+  firmNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 2,
+    marginBottom: 6,
   },
+  ampLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: 'rgba(214,158,46,0.35)',
+    maxWidth: 40,
+  },
+  firmAmp: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#d69e2e',
+    letterSpacing: 0.5,
+  },
+  firmTagline: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.5)',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+    marginTop: 2,
+  },
+  brandDivider: {
+    width: 40,
+    height: 2,
+    backgroundColor: '#d69e2e',
+    borderRadius: 1,
+    marginTop: 16,
+    marginBottom: 10,
+  },
+  portalLabel: {
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.4)',
+    letterSpacing: 3,
+    fontWeight: '600',
+  },
+
+  /* — Card — */
   card: {
     backgroundColor: '#ffffff',
     borderRadius: 16,
     padding: 24,
-    elevation: 4,
+    paddingTop: 20,
+    elevation: 8,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    overflow: 'hidden',
+  },
+  cardAccent: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 3,
+    backgroundColor: '#d69e2e',
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
   },
   cardTitle: {
     fontWeight: '700',
     color: '#0f1b2d',
     marginBottom: 4,
+    marginTop: 4,
   },
   cardSubtitle: {
     color: '#64748b',
@@ -203,5 +306,14 @@ const styles = StyleSheet.create({
     color: '#d69e2e',
     fontWeight: '600',
     fontSize: 14,
+  },
+
+  /* — Footer — */
+  footer: {
+    textAlign: 'center',
+    color: 'rgba(255,255,255,0.25)',
+    fontSize: 11,
+    marginTop: 20,
+    letterSpacing: 0.5,
   },
 })

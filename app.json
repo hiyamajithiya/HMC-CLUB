@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "scheme": "hmcclub",
     "splash": {
       "image": "./assets/splash-icon.png",
@@ -27,7 +27,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0f1b2d"
       },
-      "edgeToEdgeEnabled": true,
+      "edgeToEdgeEnabled": false,
       "permissions": [
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
@@ -43,10 +43,6 @@
         }
       ]
     ],
-    "extra": {
-      "eas": {
-        "projectId": "your-eas-project-id"
-      }
-    }
+    "extra": {}
   }
 }

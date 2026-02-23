@@ -37,7 +37,8 @@ export default function ProfileScreen({ navigation }: ClientTabScreenProps<'Prof
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text variant="headlineSmall" style={styles.headerTitle}>Profile</Text>
+        <Text style={styles.firmLabel}>Himanshu Majithiya &amp; Co.</Text>
+        <Text variant="headlineSmall" style={styles.headerTitle}>My Profile</Text>
       </View>
 
       <ScrollView
@@ -109,6 +110,14 @@ export default function ProfileScreen({ navigation }: ClientTabScreenProps<'Prof
             >
               Sign Out
             </Button>
+
+            {/* Firm branding footer */}
+            <View style={styles.brandFooter}>
+              <View style={styles.brandFooterBadge}>
+                <Text style={styles.brandFooterBadgeText}>HM&amp;Co</Text>
+              </View>
+              <Text style={styles.brandFooterText}>himanshumajithiya.com</Text>
+            </View>
           </>
         )}
       </ScrollView>
@@ -134,6 +143,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#0f1b2d',
     paddingHorizontal: 20, paddingTop: 56, paddingBottom: 16,
   },
+  firmLabel: { fontSize: 11, color: '#d69e2e', fontWeight: '600', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 2 },
   headerTitle: { color: '#fff', fontWeight: '700' },
   content: { padding: 20, paddingBottom: 40 },
   avatarSection: { alignItems: 'center', marginBottom: 24 },
@@ -165,4 +175,12 @@ const styles = StyleSheet.create({
   infoValue: { color: '#0f1b2d', fontWeight: '500' },
   actionBtn: { marginBottom: 12, borderColor: '#e2e8f0', borderRadius: 8 },
   logoutBtn: { borderRadius: 8 },
+  brandFooter: { alignItems: 'center', marginTop: 28, gap: 6 },
+  brandFooterBadge: {
+    backgroundColor: '#0f1b2d', borderRadius: 8,
+    paddingHorizontal: 10, paddingVertical: 4,
+    borderWidth: 1, borderColor: '#e2e8f0',
+  },
+  brandFooterBadgeText: { fontSize: 12, fontWeight: '800', color: '#d69e2e', letterSpacing: 0.5 },
+  brandFooterText: { fontSize: 11, color: '#94a3b8' },
 })

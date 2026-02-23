@@ -3,6 +3,7 @@ import { View, StyleSheet, FlatList, TouchableOpacity, RefreshControl } from 're
 import { Text, Searchbar, FAB, Chip } from 'react-native-paper'
 import { Ionicons } from '@expo/vector-icons'
 import { useFocusEffect } from '@react-navigation/native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { api } from '../../api/client'
 
 interface Tool {
@@ -18,6 +19,7 @@ interface Tool {
 }
 
 export default function ToolsListScreen({ navigation }: any) {
+  const insets = useSafeAreaInsets()
   const [tools, setTools] = useState<Tool[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -116,7 +118,7 @@ export default function ToolsListScreen({ navigation }: any) {
 
       <FAB
         icon="plus"
-        style={styles.fab}
+        style={[styles.fab, { bottom: 20 + insets.bottom }]}
         color="#fff"
         onPress={() => navigation.navigate('ToolCreate')}
       />
@@ -153,7 +155,7 @@ const styles = StyleSheet.create({
   emptyWrap: { alignItems: 'center', marginTop: 60, gap: 8 },
   emptyText: { color: '#94a3b8', fontSize: 14 },
   fab: {
-    position: 'absolute', right: 20, bottom: 20,
+    position: 'absolute', right: 20,
     backgroundColor: '#d69e2e', borderRadius: 28,
   },
 })

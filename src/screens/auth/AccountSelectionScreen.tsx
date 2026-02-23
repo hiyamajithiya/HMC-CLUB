@@ -31,6 +31,12 @@ export default function AccountSelectionScreen({ route, navigation }: AuthScreen
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
+        <View style={styles.brandRow}>
+          <View style={styles.brandBadge}>
+            <Text style={styles.brandBadgeText}>HM&amp;Co</Text>
+          </View>
+          <Text style={styles.brandName}>Himanshu Majithiya &amp; Co.</Text>
+        </View>
         <Text variant="headlineSmall" style={styles.title}>Select Account</Text>
         <Text variant="bodyMedium" style={styles.subtitle}>
           Multiple accounts found. Choose one to continue.
@@ -74,6 +80,13 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0f1b2d' },
   header: { padding: 24, paddingTop: 60 },
   backBtn: { marginBottom: 16 },
+  brandRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
+  brandBadge: {
+    backgroundColor: '#d69e2e', borderRadius: 6,
+    paddingHorizontal: 8, paddingVertical: 3,
+  },
+  brandBadgeText: { fontSize: 11, fontWeight: '800', color: '#fff', letterSpacing: 0.5 },
+  brandName: { fontSize: 13, fontWeight: '600', color: 'rgba(255,255,255,0.7)' },
   title: { color: '#fff', fontWeight: '700', marginBottom: 4 },
   subtitle: { color: 'rgba(255,255,255,0.7)' },
   list: { padding: 24 },
