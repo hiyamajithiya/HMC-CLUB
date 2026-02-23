@@ -43,6 +43,11 @@
         }
       ]
     ],
-    "extra": {}
+    "extra": {
+      "eas": {
+        "projectId": "383030e8-7e3f-4d18-a76b-30601f555c10"
+      }
+    },
+    "owner": "himanshu83"
   }
 }
