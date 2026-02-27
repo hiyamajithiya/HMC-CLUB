@@ -27,14 +27,18 @@ export default function DashboardScreen({ navigation }: AdminTabScreenProps<'Das
 
   useFocusEffect(useCallback(() => { fetchStats() }, [fetchStats]))
 
-  const StatCard = ({ icon, label, value, color }: {
-    icon: keyof typeof Ionicons.glyphMap; label: string; value: number; color: string
+  const StatCard = ({ icon, label, value, color, onPress }: {
+    icon: keyof typeof Ionicons.glyphMap; label: string; value: number; color: string; onPress?: () => void
   }) => (
-    <View style={[styles.statCard, { borderLeftColor: color }]}>
+    <TouchableOpacity
+      style={[styles.statCard, { borderLeftColor: color }]}
+      onPress={onPress}
+      activeOpacity={onPress ? 0.7 : 1}
+    >
       <Ionicons name={icon} size={24} color={color} />
-      <Text style={styles.statValue}>{value}</Text>
+      <Text style={styles.statValue}>{value.toLocaleString()}</Text>
       <Text style={styles.statLabel}>{label}</Text>
-    </View>
+    </TouchableOpacity>
   )
 
   return (
@@ -54,10 +58,17 @@ export default function DashboardScreen({ navigation }: AdminTabScreenProps<'Das
         {stats && (
           <>
             <View style={styles.statsGrid}>
-              <StatCard icon="people" label="Users" value={stats.totalUsers} color="#3b82f6" />
-              <StatCard icon="document-text" label="Documents" value={stats.totalDocuments} color="#22c55e" />
-              <StatCard icon="calendar" label="Appointments" value={stats.totalAppointments} color="#d69e2e" />
-              <StatCard icon="mail" label="Contacts" value={stats.totalContacts} color="#8b5cf6" />
+              <StatCard icon="people" label="Users" value={stats.totalUsers} color="#3b82f6" onPress={() => navigation.navigate('Users' as any)} />
+              <StatCard icon="document-text" label="Documents" value={stats.totalDocuments} color="#22c55e" onPress={() => navigation.navigate('AdminDocuments' as any)} />
+              <StatCard icon="calendar" label="Appointments" value={stats.totalAppointments} color="#d69e2e" onPress={() => navigation.navigate('AppointmentsList' as any)} />
+              <StatCard icon="mail" label="Contacts" value={stats.totalContacts} color="#8b5cf6" onPress={() => navigation.navigate('ContactsList' as any)} />
+            </View>
+
+            <View style={styles.statsGrid}>
+              <StatCard icon="newspaper" label="Blog Posts" value={stats.totalBlogPosts} color="#ec4899" onPress={() => navigation.navigate('BlogList' as any)} />
+              <StatCard icon="eye" label="Total Views" value={stats.totalViews || 0} color="#06b6d4" onPress={() => navigation.navigate('BlogList' as any)} />
+              <StatCard icon="construct" label="Tools" value={stats.totalTools} color="#f97316" onPress={() => navigation.navigate('ToolsList' as any)} />
+              <StatCard icon="download" label="Articles" value={stats.totalArticles || 0} color="#14b8a6" onPress={() => navigation.navigate('DownloadsList' as any)} />
             </View>
 
             {/* Quick actions */}
@@ -110,7 +121,7 @@ const styles = StyleSheet.create({
   headerTitle: { color: '#fff', fontWeight: '700' },
   headerSubtitle: { color: 'rgba(255,255,255,0.6)', marginTop: 2 },
   content: { padding: 16, paddingBottom: 40 },
-  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 24 },
+  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 12 },
   statCard: {
     width: '48%', flexGrow: 1,
     backgroundColor: '#fff', borderRadius: 12, padding: 16,
@@ -118,7 +129,7 @@ const styles = StyleSheet.create({
   },
   statValue: { fontSize: 28, fontWeight: '700', color: '#0f1b2d', marginTop: 8 },
   statLabel: { fontSize: 12, color: '#64748b', marginTop: 2 },
-  sectionTitle: { fontWeight: '700', color: '#0f1b2d', marginBottom: 12 },
+  sectionTitle: { fontWeight: '700', color: '#0f1b2d', marginTop: 12, marginBottom: 12 },
   actionsRow: { flexDirection: 'row', gap: 10, marginBottom: 24 },
   actionCard: {
     flex: 1, backgroundColor: '#fff', borderRadius: 12,

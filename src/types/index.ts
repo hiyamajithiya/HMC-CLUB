@@ -175,6 +175,8 @@ export interface DashboardStats {
   totalContacts: number
   totalBlogPosts: number
   totalTools: number
+  totalArticles: number
+  totalViews: number
   pendingAppointments: number
   unreadContacts: number
   recentUsers: User[]

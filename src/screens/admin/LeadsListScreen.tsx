@@ -12,6 +12,7 @@ interface Lead {
   phone?: string
   toolName?: string
   tool?: { name: string }
+  article?: { title: string }
   verified: boolean
   downloadDate?: string
   createdAt: string
@@ -36,11 +37,19 @@ export default function LeadsListScreen({ navigation }: any) {
 
   useFocusEffect(useCallback(() => { fetchLeads() }, [fetchLeads]))
 
+  const getSourceName = (lead: Lead): string | undefined => {
+    return lead.toolName || lead.tool?.name || lead.article?.title
+  }
+
+  const isArticleLead = (lead: Lead): boolean => {
+    return !lead.tool && !lead.toolName && !!lead.article
+  }
+
   const filtered = search
     ? leads.filter(l =>
         (l.name || '').toLowerCase().includes(search.toLowerCase()) ||
         (l.email || '').toLowerCase().includes(search.toLowerCase()) ||
-        (l.toolName || l.tool?.name || '').toLowerCase().includes(search.toLowerCase())
+        (getSourceName(l) || '').toLowerCase().includes(search.toLowerCase())
       )
     : leads
 
@@ -83,49 +92,59 @@ export default function LeadsListScreen({ navigation }: any) {
             </View>
           ) : null
         }
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <View style={styles.cardTop}>
-              <View style={styles.leadAvatar}>
-                <Text style={styles.leadAvatarText}>
-                  {(item.name || 'L').charAt(0).toUpperCase()}
-                </Text>
-              </View>
-              <View style={styles.cardInfo}>
-                <Text variant="titleSmall" style={styles.cardName} numberOfLines={1}>
-                  {item.name}
-                </Text>
-                <Text variant="bodySmall" style={styles.cardEmail} numberOfLines={1}>
-                  {item.email}
-                </Text>
-              </View>
-              <Chip
-                compact
-                textStyle={{
-                  fontSize: 10,
-                  color: item.verified ? '#166534' : '#92400e',
-                  fontWeight: '700',
-                }}
-                style={{
-                  backgroundColor: item.verified ? '#dcfce7' : '#fef3c7',
-                }}
-              >
-                {item.verified ? 'Verified' : 'Unverified'}
-              </Chip>
-            </View>
-            <View style={styles.cardBottom}>
-              {(item.toolName || item.tool?.name) && (
-                <View style={styles.toolBadge}>
-                  <Ionicons name="construct-outline" size={12} color="#3b82f6" />
-                  <Text style={styles.toolText}>{item.toolName || item.tool?.name}</Text>
+        renderItem={({ item }) => {
+          const sourceName = getSourceName(item)
+          const articleLead = isArticleLead(item)
+          return (
+            <View style={styles.card}>
+              <View style={styles.cardTop}>
+                <View style={styles.leadAvatar}>
+                  <Text style={styles.leadAvatarText}>
+                    {(item.name || 'L').charAt(0).toUpperCase()}
+                  </Text>
                 </View>
-              )}
-              <Text style={styles.cardDate}>
-                {formatDate(item.downloadDate || item.createdAt)}
-              </Text>
+                <View style={styles.cardInfo}>
+                  <Text variant="titleSmall" style={styles.cardName} numberOfLines={1}>
+                    {item.name}
+                  </Text>
+                  <Text variant="bodySmall" style={styles.cardEmail} numberOfLines={1}>
+                    {item.email}
+                  </Text>
+                </View>
+                <Chip
+                  compact
+                  textStyle={{
+                    fontSize: 10,
+                    color: item.verified ? '#166534' : '#92400e',
+                    fontWeight: '700',
+                  }}
+                  style={{
+                    backgroundColor: item.verified ? '#dcfce7' : '#fef3c7',
+                  }}
+                >
+                  {item.verified ? 'Verified' : 'Unverified'}
+                </Chip>
+              </View>
+              <View style={styles.cardBottom}>
+                {sourceName && (
+                  <View style={[styles.sourceBadge, articleLead ? styles.articleBadge : styles.toolBadge]}>
+                    <Ionicons
+                      name={articleLead ? 'document-text-outline' : 'construct-outline'}
+                      size={12}
+                      color={articleLead ? '#7c3aed' : '#3b82f6'}
+                    />
+                    <Text style={[styles.sourceText, articleLead ? styles.articleText : styles.toolText]}>
+                      {sourceName}
+                    </Text>
+                  </View>
+                )}
+                <Text style={styles.cardDate}>
+                  {formatDate(item.downloadDate || item.createdAt)}
+                </Text>
+              </View>
             </View>
-          </View>
-        )}
+          )
+        }}
       />
     </View>
   )
@@ -157,11 +176,16 @@ const styles = StyleSheet.create({
   cardName: { fontWeight: '600', color: '#0f1b2d' },
   cardEmail: { color: '#94a3b8', marginTop: 1 },
   cardBottom: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  toolBadge: {
+  sourceBadge: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
-    backgroundColor: '#dbeafe', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6,
+    paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6,
+    flexShrink: 1,
   },
-  toolText: { fontSize: 11, color: '#3b82f6', fontWeight: '600' },
+  toolBadge: { backgroundColor: '#dbeafe' },
+  articleBadge: { backgroundColor: '#ede9fe' },
+  sourceText: { fontSize: 11, fontWeight: '600' },
+  toolText: { color: '#3b82f6' },
+  articleText: { color: '#7c3aed' },
   cardDate: { fontSize: 11, color: '#94a3b8' },
   emptyWrap: { alignItems: 'center', marginTop: 60, gap: 8 },
   emptyText: { color: '#94a3b8', fontSize: 14 },
